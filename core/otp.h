@@ -1,5 +1,10 @@
 #pragma once
 
-#include <iostream>
+#include <stdint.h>
 
-void print();
+#include <array>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+std::vector<uint8_t> b32decode(std::string& str);

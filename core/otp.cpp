@@ -30,3 +30,13 @@ std::vector<uint8_t> b32decode(std::string& str) {
 
   return out;
 }
+
+std::array<uint8_t, 8> int2bytes(int& n) {
+  std::array<uint8_t, 8> bytes = {0};
+  for (int i = 7; i >= 0; --i) {
+    // convert n to it's least significant byte
+    bytes[i] = static_cast<uint8_t>(n & 0xFF);
+    n >>= 8;
+  }
+  return bytes;
+}

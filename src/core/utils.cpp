@@ -1,6 +1,8 @@
 #include "utils.h"
 
 void b32decode(std::string* str, std::vector<uint8_t>* value) {
+  value->clear();
+
   const std::string _b32alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
   int bits = 0;
   uint32_t val = 0;
@@ -17,14 +19,14 @@ void b32decode(std::string* str, std::vector<uint8_t>* value) {
 
     // byte extraction
     if (bits >= 8) {
-      (*value).push_back(val >> (bits - 8));
+      value->push_back(val >> (bits - 8));
       bits -= 8;
       val &= (1 << bits) - 1;
     }
   }
 
   if (bits > 0) {
-    (*value).push_back(val << (8 - bits));
+    value->push_back(val << (8 - bits));
   }
 }
 

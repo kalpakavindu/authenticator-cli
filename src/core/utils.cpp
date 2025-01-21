@@ -1,4 +1,4 @@
-#include "otp.h"
+#include "utils.h"
 
 std::vector<uint8_t> b32decode(std::string& str) {
   const std::string _b32alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";

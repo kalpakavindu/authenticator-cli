@@ -7,6 +7,6 @@
 #include <string>
 #include <vector>
 
-std::vector<uint8_t> b32decode(std::string& str);
+void b32decode(std::string* str, std::vector<uint8_t>* value);
 
-std::array<uint8_t, 8> int2bytes(int& n);
+void int2bytes(int& n, std::array<uint8_t, 8>* value);

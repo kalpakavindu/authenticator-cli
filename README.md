@@ -1,3 +1,3 @@
 # Authenticator CLI
 
-Terminal integrated 2FA Authentication tool
+Terminal integrated TOTP and HOTP authentication tool

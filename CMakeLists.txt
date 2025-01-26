@@ -7,10 +7,4 @@ set(Authenticator_LIB_DIR ${PROJECT_SOURCE_DIR}/lib)
 set(Authenticator_INC_DIR ${PROJECT_SOURCE_DIR}/include)
 set(Authenticator_EXT_DIR ${PROJECT_SOURCE_DIR}/external)
 
-include_directories(
-  ${Authenticator_INC_DIR},
-  ${Authenticator_EXT_DIR}/hmac_sha256
-)
-
 add_subdirectory(src)
-add_subdirectory(external)

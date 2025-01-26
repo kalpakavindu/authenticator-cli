@@ -1,17 +1,19 @@
 #include <cassert>
 #include <iostream>
 
-#include "crypto/sha256.h"
+#include "crypto/hmac.h"
 
 int main() {
-  const std::string secret = "test";
-  SHA256 sha2;
+  const std::string secret = "key";
+  const std::string data = "The quick brown fox jumps over the lazy dog";
+  HMAC hmac(secret);
 
-  sha2.update(secret.data(), secret.size());
-  std::string hash = sha2.hexdigest();
+  hmac.update(data);
+  std::string hash = hmac.hexdigest();
 
   std::cout << hash << std::endl;
-  assert(hash == "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08");
+
+  assert(hash == "f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8");
 
   return 0;
 }

@@ -17,15 +17,15 @@ const uint32_t K[64] = {
 
 std::vector<unsigned char> data;
 
-void SHA256::init() {
-  SHA256::h[0] = 0x6A09E667;
-  SHA256::h[1] = 0xBB67AE85;
-  SHA256::h[2] = 0x3C6EF372;
-  SHA256::h[3] = 0xA54FF53A;
-  SHA256::h[4] = 0x510E527F;
-  SHA256::h[5] = 0x9B05688C;
-  SHA256::h[6] = 0x1F83D9AB;
-  SHA256::h[7] = 0x5BE0CD19;
+void SHA256::_init() {
+  SHA256::_h[0] = 0x6A09E667;
+  SHA256::_h[1] = 0xBB67AE85;
+  SHA256::_h[2] = 0x3C6EF372;
+  SHA256::_h[3] = 0xA54FF53A;
+  SHA256::_h[4] = 0x510E527F;
+  SHA256::_h[5] = 0x9B05688C;
+  SHA256::_h[6] = 0x1F83D9AB;
+  SHA256::_h[7] = 0x5BE0CD19;
   data.clear();
 }
 
@@ -58,7 +58,7 @@ uint32_t sum1(uint32_t x) {
 }
 
 void SHA256::update(const char* message, size_t length) {
-  SHA256::init();
+  SHA256::_init();
   uint64_t ml = length * 8;
   for (size_t i = 0; i < length; i++) {
     data.push_back(message[i]);
@@ -73,7 +73,7 @@ void SHA256::update(const char* message, size_t length) {
   }
 }
 
-void SHA256::transform(uint32_t chunk[16]) {
+void SHA256::_transform(uint32_t chunk[16]) {
   uint32_t v[8];
   uint32_t w[64];
   for (int i = 0; i < 16; ++i) {
@@ -83,7 +83,7 @@ void SHA256::transform(uint32_t chunk[16]) {
     w[i] = w[i - 16] + sum0(w[i - 15]) + w[i - 7] + sum1(w[i - 2]);
   }
   for (int i = 0; i < 8; ++i) {
-    v[i] = SHA256::h[i];
+    v[i] = SHA256::_h[i];
   }
 
   // Compress
@@ -102,11 +102,11 @@ void SHA256::transform(uint32_t chunk[16]) {
   }
 
   for (int i = 0; i < 8; ++i) {
-    SHA256::h[i] += v[i];
+    SHA256::_h[i] += v[i];
   }
 }
 
-void SHA256::calculate() {
+void SHA256::_calculate() {
   uint32_t chunk[16];
   int round = 0;
   for (int i = 0; i < data.size(); i += 4) {
@@ -114,23 +114,23 @@ void SHA256::calculate() {
     ++round;
 
     if (round == 16) {
-      SHA256::transform(chunk);
+      SHA256::_transform(chunk);
       round = 0;
     }
   }
 }
 
 std::array<uint8_t, SHA256_DIGEST_SIZE> SHA256::digest() {
-  SHA256::calculate();
+  SHA256::_calculate();
 
   std::array<uint8_t, SHA256_DIGEST_SIZE> out;
   int count = 0;
 
   for (size_t i = 0; i < 8; ++i) {
-    out[count] = ((SHA256::h[i] >> 24) & 0xFF);
-    out[count + 1] = ((SHA256::h[i] >> 16) & 0xFF);
-    out[count + 2] = ((SHA256::h[i] >> 8) & 0xFF);
-    out[count + 3] = (SHA256::h[i] & 0xFF);
+    out[count] = ((SHA256::_h[i] >> 24) & 0xFF);
+    out[count + 1] = ((SHA256::_h[i] >> 16) & 0xFF);
+    out[count + 2] = ((SHA256::_h[i] >> 8) & 0xFF);
+    out[count + 3] = (SHA256::_h[i] & 0xFF);
     count += 4;
   }
 

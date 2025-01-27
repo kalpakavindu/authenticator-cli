@@ -40,14 +40,14 @@ void HMAC::update(const std::string& data) {
   byte_data = data;
 
   for (size_t i = 0; i < HMAC_BLOCK_SIZE; ++i) {
-    HMAC::opad[i] = byte_key[i] ^ (char)0x5c;
-    HMAC::ipad[i] = byte_key[i] ^ (char)0x36;
+    HMAC::_opad[i] = byte_key[i] ^ (char)0x5c;
+    HMAC::_ipad[i] = byte_key[i] ^ (char)0x36;
   }
 }
 
 std::array<uint8_t, HMAC_DIGEST_SIZE> HMAC::digest() {
   std::string inner_data;
-  for (unsigned char c : ipad) {
+  for (unsigned char c : _ipad) {
     inner_data += (char)c;
   }
   inner_data += byte_data;
@@ -55,7 +55,7 @@ std::array<uint8_t, HMAC_DIGEST_SIZE> HMAC::digest() {
   std::array<uint8_t, HMAC_DIGEST_SIZE> inner_hash = sha2.digest();
 
   std::string outer_data;
-  for (unsigned char c : opad) {
+  for (unsigned char c : _opad) {
     outer_data += (char)c;
   }
   for (uint8_t x : inner_hash) {
@@ -68,7 +68,7 @@ std::array<uint8_t, HMAC_DIGEST_SIZE> HMAC::digest() {
 
 std::string HMAC::hexdigest() {
   std::string inner_data;
-  for (unsigned char c : ipad) {
+  for (unsigned char c : _ipad) {
     inner_data += (char)c;
   }
   inner_data += byte_data;
@@ -76,7 +76,7 @@ std::string HMAC::hexdigest() {
   std::array<uint8_t, HMAC_DIGEST_SIZE> inner_hash = sha2.digest();
 
   std::string outer_data;
-  for (unsigned char c : opad) {
+  for (unsigned char c : _opad) {
     outer_data += (char)c;
   }
   for (uint8_t x : inner_hash) {

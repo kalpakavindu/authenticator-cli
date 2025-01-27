@@ -7,12 +7,12 @@ constexpr size_t SHA256_DIGEST_SIZE = 32;
 
 class SHA256 {
  private:
-  uint32_t h[8];
+  uint32_t _h[8];
 
  private:
-  void transform(uint32_t chunk[16]);
-  void calculate();
-  void init();
+  void _transform(uint32_t chunk[16]);
+  void _calculate();
+  void _init();
 
  public:
   SHA256() {};

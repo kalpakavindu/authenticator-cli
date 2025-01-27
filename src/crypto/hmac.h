@@ -8,8 +8,8 @@ constexpr size_t HMAC_DIGEST_SIZE = 32;
 
 class HMAC {
  private:
-  std::array<unsigned char, HMAC_BLOCK_SIZE> ipad;
-  std::array<unsigned char, HMAC_BLOCK_SIZE> opad;
+  std::array<unsigned char, HMAC_BLOCK_SIZE> _ipad;
+  std::array<unsigned char, HMAC_BLOCK_SIZE> _opad;
 
  public:
   HMAC(const std::string& key);

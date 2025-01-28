@@ -52,7 +52,7 @@ std::array<uint8_t, HMAC_DIGEST_SIZE> HMAC::digest() {
   }
   inner_data += byte_data;
   sha2.update(inner_data.data(), inner_data.size());
-  std::array<uint8_t, HMAC_DIGEST_SIZE> inner_hash = sha2.digest();
+  std::array<uint8_t, SHA256_DIGEST_SIZE> inner_hash = sha2.digest();
 
   std::string outer_data;
   for (unsigned char c : _opad) {
@@ -62,7 +62,7 @@ std::array<uint8_t, HMAC_DIGEST_SIZE> HMAC::digest() {
     outer_data += (char)x;
   }
   sha2.update(outer_data.data(), outer_data.size());
-  std::array<uint8_t, HMAC_DIGEST_SIZE> outer_hash = sha2.digest();
+  std::array<uint8_t, SHA256_DIGEST_SIZE> outer_hash = sha2.digest();
   return outer_hash;
 }
 

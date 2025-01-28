@@ -9,6 +9,7 @@ target_link_libraries(Authenticator
   PRIVATE Crypto
 )
 target_include_directories(Authenticator 
+  PRIVATE ${Authenticator_INC_DIR}
   PRIVATE ${PROJECT_SOURCE_DIR}/src
 )
 

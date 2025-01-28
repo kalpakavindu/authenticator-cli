@@ -48,3 +48,4 @@ CMakeUserPresets.json
 build/
 .vscode/
 data.txt
+test.py

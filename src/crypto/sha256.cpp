@@ -15,8 +15,6 @@ const uint32_t K[64] = {
     0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
 
-std::vector<unsigned char> data;
-
 void SHA256::_init() {
   SHA256::_h[0] = 0x6A09E667;
   SHA256::_h[1] = 0xBB67AE85;
@@ -26,7 +24,11 @@ void SHA256::_init() {
   SHA256::_h[5] = 0x9B05688C;
   SHA256::_h[6] = 0x1F83D9AB;
   SHA256::_h[7] = 0x5BE0CD19;
-  data.clear();
+  SHA256::_data.clear();
+}
+
+uint32_t rotr(uint32_t x, uint32_t n) {
+  return (((x) >> (n)) | ((x) << (32 - (n))));
 }
 
 uint32_t ch(uint32_t a, uint32_t b, uint32_t c) {
@@ -35,10 +37,6 @@ uint32_t ch(uint32_t a, uint32_t b, uint32_t c) {
 
 uint32_t maj(uint32_t a, uint32_t b, uint32_t c) {
   return (((a | b) & c) | (a & b));
-}
-
-uint32_t rotr(uint32_t x, uint32_t n) {
-  return (((x) >> (n)) | ((x) << (32 - (n))));
 }
 
 uint32_t sig0(uint32_t x) {
@@ -61,15 +59,15 @@ void SHA256::update(const char* message, size_t length) {
   SHA256::_init();
   uint64_t ml = length * 8;
   for (size_t i = 0; i < length; i++) {
-    data.push_back(message[i]);
+    SHA256::_data.push_back(message[i]);
   }
-  data.push_back((char)0x80);  // Append '1' byte
-  while (data.size() % 64 != 56) {
-    data.push_back((char)0x00);
+  SHA256::_data.push_back((char)0x80);  // Append '1' byte
+  while (SHA256::_data.size() % SHA256::BLOCK_SIZE != (SHA256::BLOCK_SIZE - 8)) {
+    SHA256::_data.push_back((char)0x00);
   }
   // Append message length as big-endian 64-bit integer
   for (int i = 56; i >= 0; i -= 8) {
-    data.push_back((char)((ml >> i) & 0xFF));
+    SHA256::_data.push_back((char)((ml >> i) & 0xFF));
   }
 }
 
@@ -109,8 +107,11 @@ void SHA256::_transform(uint32_t chunk[16]) {
 void SHA256::_calculate() {
   uint32_t chunk[16];
   int round = 0;
-  for (int i = 0; i < data.size(); i += 4) {
-    chunk[round] = (data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | (data[i + 3]);
+  for (int i = 0; i < SHA256::_data.size(); i += 4) {
+    chunk[round] = (SHA256::_data[i] << 24) |
+                   (SHA256::_data[i + 1] << 16) |
+                   (SHA256::_data[i + 2] << 8) |
+                   (SHA256::_data[i + 3]);
     ++round;
 
     if (round == 16) {
@@ -120,10 +121,10 @@ void SHA256::_calculate() {
   }
 }
 
-std::array<uint8_t, SHA256_DIGEST_SIZE> SHA256::digest() {
+std::array<uint8_t, SHA256::DIGEST_SIZE> SHA256::digest() {
   SHA256::_calculate();
 
-  std::array<uint8_t, SHA256_DIGEST_SIZE> out;
+  std::array<uint8_t, SHA256::DIGEST_SIZE> out;
   int count = 0;
 
   for (size_t i = 0; i < 8; ++i) {
@@ -139,7 +140,7 @@ std::array<uint8_t, SHA256_DIGEST_SIZE> SHA256::digest() {
 
 std::string SHA256::hexdigest() {
   std::stringstream ss;
-  std::array<uint8_t, SHA256_DIGEST_SIZE> d = SHA256::digest();
+  std::array<uint8_t, SHA256::DIGEST_SIZE> d = SHA256::digest();
   for (uint8_t x : d) {
     ss << std::hex << std::setfill('0') << std::setw(2) << (int)x;
   }

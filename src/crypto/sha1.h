@@ -1,18 +1,18 @@
-#pragma
+#pragma once
 
 #include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-class SHA256 {
+class SHA1 {
  public:
-  static const size_t DIGEST_SIZE = 32;
+  static const size_t DIGEST_SIZE = 20;
   static const size_t BLOCK_SIZE = 64;
 
  private:
+  uint32_t _h[5];
   std::vector<unsigned char> _data;
-  uint32_t _h[8];
 
  private:
   void _transform(uint32_t chunk[16]);
@@ -20,8 +20,8 @@ class SHA256 {
   void _init();
 
  public:
-  SHA256() {};
+  SHA1() {};
   void update(const char* message, size_t length);
-  std::array<uint8_t, SHA256::DIGEST_SIZE> digest();
+  std::array<uint8_t, SHA1::DIGEST_SIZE> digest();
   std::string hexdigest();
 };

@@ -4,10 +4,10 @@
 
 int main() {
   const std::string key = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
-  const uint64_t data = 0;
+  const uint64_t data = 1111111111;
   Otp otp(key);
 
-  std::string code = otp.generate_code(data);
+  int code = otp.generate_code(data);
 
   std::cout << code << std::endl;
   return 0;

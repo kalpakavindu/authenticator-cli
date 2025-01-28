@@ -9,5 +9,5 @@ class Otp {
 
  public:
   Otp(const std::string& secret);
-  std::string generate_code(const uint64_t& data);
+  int generate_code(const uint64_t& data);
 };

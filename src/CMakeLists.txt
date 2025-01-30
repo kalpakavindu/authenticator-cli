@@ -7,6 +7,7 @@ add_executable(authenticator ${SOURCE_FILES})
 target_link_libraries(authenticator 
   PRIVATE core
   PRIVATE crypto
+  PRIVATE commander
 )
 target_include_directories(authenticator 
   PRIVATE ${Authenticator_INC_DIR}

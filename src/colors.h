@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace Colors {
+namespace colors {
   template <class CharT, class Traits>
   constexpr std::basic_ostream<CharT, Traits>& reset(std::basic_ostream<CharT, Traits>& os) {
     return os << "\033[0m";
@@ -27,4 +27,4 @@ namespace Colors {
   constexpr std::basic_ostream<CharT, Traits>& blue(std::basic_ostream<CharT, Traits>& os) {
     return os << "\033[34m";
   }
-}  // namespace Colors
+}  // namespace colors

@@ -5,17 +5,9 @@
 
 namespace core {
   struct Account {
-    std::string id;
+    std::string alias;
     std::string name;
     std::string key;
-
-    void set_name(const std::string val) {
-      Account::name = val;
-    }
-
-    void set_key(const std::string val) {
-      Account::key = val;
-    }
   };
 
   class Storage {
@@ -24,16 +16,16 @@ namespace core {
     std::vector<Account> _accounts;
 
    private:
-    bool _load();
-    bool _save();
-    int _get_index(const std::string id) const;
+    void _load();
+    void _save();
+    int _get_index(const std::string alias) const;
 
    public:
     Storage(const std::string filename);
-    void add(const std::string& name, const std::string& key);
-    bool updateById(const std::string id, const std::string* name, const std::string* key);
-    bool deleteById(const std::string id);
-    const Account* findById(const std::string id) const;
-    std::vector<Account> listAll() const;
+    void add(const std::string& name, const std::string& key, const std::string& alias);
+    void updateOne(const std::string id, const std::string* name, const std::string* key, const std::string* alias);
+    void deleteOne(const std::string alias);
+    const Account* findOne(const std::string alias) const;
+    std::vector<Account> listAll();
   };
 }  // namespace core

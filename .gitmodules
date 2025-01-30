@@ -1,0 +1,3 @@
+[submodule "dependencies/cpp-commander"]
+	path = dependencies/cpp-commander
+	url = https://github.com/yitsushi/cpp-commander.git

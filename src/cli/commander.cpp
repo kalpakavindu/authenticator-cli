@@ -35,13 +35,18 @@ Commander::Commander(int argc, const char* argv[]) {
   }
 }
 
+void Commander::Register(CommandSetup setup_func) {
+  Command cmd = setup_func();
+  Commander::_commands.push_back(cmd);
+}
+
 void Commander::_get_help(std::string* command) {
   if (command) {
     // Check command exists
     Command* cmd = nullptr;
-    for (Command* c : Commander::_commands) {
-      if (c->name == *command) {
-        cmd = c;
+    for (Command& c : Commander::_commands) {
+      if (c.get_name() == *command) {
+        cmd = &c;
       }
     }
     if (!cmd)
@@ -52,12 +57,12 @@ void Commander::_get_help(std::string* command) {
     std::cout << "    auth-cli [global-options] command [command-options] [arguments...]\n\n";
     std::cout << "Commands:\n";
 
-    for (Command* cmd : Commander::_commands) {
-      std::string c = cmd->name;
+    for (Command& cmd : Commander::_commands) {
+      std::string c = cmd.get_name();
       while (c.size() == 20) {
         c += " ";
       }
-      std::cout << "    " << c << cmd->desc << "\n";
+      std::cout << "    " << c << cmd.get_desc() << "\n";
     }
 
     std::cout << "\nGlobal options:\n";
@@ -76,31 +81,33 @@ void Commander::run() {
     }
   } else {
     // Process command
-    for (Command* cmd : Commander::_commands) {
-      if (cmd->name == Commander::_cur_command) {
-        for (Argument* arg : cmd->arguments) {
+    for (Command& cmd : Commander::_commands) {
+      if (cmd.get_name() == Commander::_cur_command) {
+        for (Argument& arg : *(cmd.get_args())) {
           // Check required auguments
-          if (arg->required) {
+          if (arg.required) {
             bool found = false;
             for (std::pair<std::string, std::string> key : Commander::_cur_args) {
-              if (arg->key == key.first || arg->short_key == key.first) {
-                found = true;
+              if (arg.key == key.first || arg.short_key == key.first) {
+                if (key.second != "") {
+                  found = true;
+                }
               }
             }
 
             if (!found) {
-              throw std::invalid_argument("Argument '" + arg->key + "' is required.");
+              throw std::invalid_argument("Argument '" + arg.key + "' is required.");
             }
           }
 
           // Set argument values
           for (std::pair<std::string, std::string> key : Commander::_cur_args) {
-            if (arg->key == key.first || arg->short_key == key.first) {
-              arg->value = key.second;
+            if (arg.key == key.first || arg.short_key == key.first) {
+              arg.value = key.second;
             }
           }
         }
-        cmd->exec();
+        cmd.exec();
         return;
       }
     }

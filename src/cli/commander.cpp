@@ -23,6 +23,11 @@ Commander::Commander(int argc, const char* argv[]) {
           std::string arg = argv[i];
           if (arg.find("=") != std::string::npos) {
             std::vector<std::string> splitted = utils::split(arg, "=");
+            // Trim `''`s and `""`s in result
+            if (splitted[1].rfind("\'", 0) == 0)
+              utils::trim(splitted[1], '\'');
+            if (splitted[1].rfind("\"", 0) == 0)
+              utils::trim(splitted[1], '\"');
             Commander::_cur_args.push_back({splitted[0], splitted[1]});
           } else {
             Commander::_cur_args.push_back({arg, ""});
@@ -59,7 +64,7 @@ void Commander::_get_help(std::string* command) {
 
     for (Command& cmd : Commander::_commands) {
       std::string c = cmd.get_name();
-      while (c.size() == 20) {
+      while (c.size() < 20) {
         c += " ";
       }
       std::cout << "    " << c << cmd.get_desc() << "\n";

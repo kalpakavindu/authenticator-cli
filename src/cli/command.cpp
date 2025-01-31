@@ -6,8 +6,8 @@ Command::Command(const std::string name, const std::string desc) : _name(name), 
 
 void Command::get_help() {
   std::cout << "Command: " << Command::_name << "\n";
-  std::cout << Command::_desc << "\n\nUsage:\n";
-  std::cout << "    auth-cli [global-options] command [command-options]\n\nCommand options:\n";
+  std::cout << Command::_desc << "\n\nUsage:\n    ";
+  std::cout << "auth-cli [global-options] " << Command::_name << " [command-options]\n\nCommand options:\n";
 
   for (Argument& arg : Command::_arguments) {
     std::string a = arg.key + "," + arg.short_key;

@@ -104,12 +104,19 @@ void Commander::run() {
               throw std::invalid_argument("Argument '" + arg.key + "' is required.");
             }
           }
+        }
 
-          // Set argument values
-          for (std::pair<std::string, std::string> key : Commander::_cur_args) {
+        // Set argument values
+        for (std::pair<std::string, std::string> key : Commander::_cur_args) {
+          bool arg_found = false;
+          for (Argument& arg : *(cmd.get_args())) {
             if (arg.key == key.first || arg.short_key == key.first) {
+              arg_found = true;
               arg.value = key.second;
             }
+          }
+          if (!arg_found) {
+            throw std::invalid_argument("Invalid argument '" + key.first + "'.");
           }
         }
         cmd.exec();

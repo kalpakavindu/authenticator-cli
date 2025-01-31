@@ -7,110 +7,116 @@
 
 #include "utils.h"
 
-namespace core {
-  void Storage::_load() {
-    std::ifstream f(Storage::_filename);
-    if (!f.is_open())
-      throw std::runtime_error("Failed to open database file.");
+void Storage::_load() {
+  std::ifstream f(Storage::_filename);
+  if (!f.is_open())
+    throw std::runtime_error("Failed to open database file.");
 
-    Storage::_accounts.clear();
+  Storage::_accounts.clear();
 
-    std::string line;
-    while (std::getline(f, line)) {
-      std::istringstream iss(line);
-      std::array<std::string, 3> data;
+  std::string line;
+  while (std::getline(f, line)) {
+    std::istringstream iss(line);
+    std::array<std::string, 3> data;
 
-      int i = 0;
-      std::string token;
-      while (std::getline(iss, token, '|')) {
-        data[i++] = token;
-      }
-
-      Storage::_accounts.push_back({data[0], data[1], data[2]});
-    }
-    f.close();
-  }
-
-  void Storage::_save() {
-    std::ofstream f(Storage::_filename);
-    if (!f.is_open())
-      throw std::runtime_error("Failed to open database file.");
-
-    for (const Account& a : Storage::_accounts) {
-      f << a.alias << '|' << a.name << '|' << a.key << std::endl;
-    }
-    f.close();
-  }
-
-  int Storage::_get_index(const std::string alias) const {
     int i = 0;
-    for (const Account& a : Storage::_accounts) {
-      if (a.alias == alias)
-        return i;
-      ++i;
+    std::string token;
+    while (std::getline(iss, token, '|')) {
+      data[i++] = token;
     }
-    return -1;
+
+    Storage::_accounts.push_back({data[0], data[1], data[2]});
   }
+  f.close();
+}
 
-  Storage::Storage(const std::string filename) : _filename(filename) {
-    Storage::_load();
+void Storage::_save() {
+  std::ofstream f(Storage::_filename);
+  if (!f.is_open())
+    throw std::runtime_error("Failed to open database file.");
+
+  for (const Account& a : Storage::_accounts) {
+    f << a.alias << '|' << a.name << '|' << a.key << std::endl;
   }
+  f.close();
+}
 
-  std::vector<Account> Storage::listAll() {
-    Storage::_load();
-    return Storage::_accounts;
+int Storage::_get_index(const std::string alias) const {
+  int i = 0;
+  for (const Account& a : Storage::_accounts) {
+    if (a.alias == alias)
+      return i;
+    ++i;
   }
+  return -1;
+}
 
-  void Storage::add(const std::string& name, const std::string& key, const std::string& alias) {
-    if (Storage::_get_index(alias) != -1)
-      throw std::invalid_argument("Alias is already taken.");
+std::vector<Account> Storage::listAll() {
+  Storage::_load();
+  return Storage::_accounts;
+}
 
-    Account newAcc{alias, name, key};
-    Storage::_accounts.push_back(newAcc);
-    Storage::_save();
-  }
+void Storage::add(const std::string& name, const std::string& key, const std::string& alias) {
+  Storage::_load();
 
-  void Storage::updateOne(const std::string id, const std::string* name, const std::string* key, const std::string* alias) {
-    if (Storage::_get_index(id) == -1)
-      throw std::invalid_argument("Alias not found.");
+  if (Storage::_get_index(alias) != -1)
+    throw std::invalid_argument("Alias is already taken.");
 
-    if (!name && !key && !alias)
-      return;
+  Account newAcc{alias, name, key};
+  Storage::_accounts.push_back(newAcc);
+  Storage::_save();
+}
 
-    for (Account& a : Storage::_accounts) {
-      if (a.alias == id) {
-        if (name)
-          a.name = *name;
+void Storage::updateOne(const std::string id, const std::string* name, const std::string* key, const std::string* alias) {
+  Storage::_load();
 
-        if (key)
-          a.key = *key;
+  if (Storage::_get_index(id) == -1)
+    throw std::invalid_argument("Alias not found.");
 
-        if (alias) {
-          if (Storage::_get_index(*alias) != -1)
-            throw std::invalid_argument("New alias is already exists.");
-          a.alias = *alias;
-        }
+  if (!name && !key && !alias)
+    return;
 
-        Storage::_save();
+  for (Account& a : Storage::_accounts) {
+    if (a.alias == id) {
+      if (name)
+        a.name = *name;
+
+      if (key)
+        a.key = *key;
+
+      if (alias) {
+        if (Storage::_get_index(*alias) != -1)
+          throw std::invalid_argument("New alias is already exists.");
+        a.alias = *alias;
       }
+
+      Storage::_save();
     }
   }
+}
 
-  void Storage::deleteOne(const std::string alias) {
-    int pos = Storage::_get_index(alias);
-    if (pos == -1)
-      throw std::invalid_argument("Alias not found.");
+void Storage::deleteOne(const std::string alias) {
+  Storage::_load();
 
-    Storage::_accounts.erase(Storage::_accounts.begin() + pos);
-    Storage::_save();
-  }
+  int pos = Storage::_get_index(alias);
+  if (pos == -1)
+    throw std::invalid_argument("Alias not found.");
 
-  const Account* Storage::findOne(const std::string alias) const {
-    for (const Account& a : Storage::_accounts) {
-      if (a.alias == alias) {
-        return &a;
-      }
+  Storage::_accounts.erase(Storage::_accounts.begin() + pos);
+  Storage::_save();
+}
+
+const Account* Storage::findOne(const std::string alias) {
+  Storage::_load();
+
+  for (const Account& a : Storage::_accounts) {
+    if (a.alias == alias) {
+      return &a;
     }
-    return nullptr;
   }
-}  // namespace core
+  return nullptr;
+}
+
+// Init static members
+Storage* Storage::_storagePtr = nullptr;
+std::mutex Storage::_mtx;

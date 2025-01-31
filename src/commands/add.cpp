@@ -2,6 +2,9 @@
 
 #include "cli/colors.h"
 #include "cli/command.h"
+#include "core/storage.h"
+
+Storage* store = Storage::Instance();
 
 void handler(std::vector<Argument>& args) {
   std::string alias;
@@ -17,9 +20,8 @@ void handler(std::vector<Argument>& args) {
       secret = arg.value;
   }
 
-  std::cout << colors::blue << name << colors::reset << " ";
-  std::cout << colors::green << alias << colors::reset << " ";
-  std::cout << colors::yellow << secret << colors::reset << " ";
+  store->add(name, secret, alias);
+  std::cout << "New account '" << colors::blue << alias << colors::reset << "' created." << std::endl;
 }
 
 Command setup_add() {

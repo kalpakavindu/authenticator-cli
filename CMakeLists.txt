@@ -9,8 +9,6 @@ set(Authenticator_EXT_DIR ${PROJECT_SOURCE_DIR}/dependencies)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
-  ${Authenticator_EXT_DIR}/
 )
 
 add_subdirectory(src)
-add_subdirectory(dependencies)

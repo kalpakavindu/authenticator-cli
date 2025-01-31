@@ -6,7 +6,7 @@
 
 namespace core {
   Otp::Otp(const std::string& secret) {
-    Otp::_secret = core::utils::b32decode(secret);
+    Otp::_secret = utils::b32decode(secret);
   }
 
   int Otp::generate_code(const uint64_t& data) {

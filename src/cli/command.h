@@ -9,6 +9,7 @@ struct Argument {
   const std::string desc;
   const bool required;
   std::string value;
+  bool specified;
 };
 
 typedef void (*Callable)(std::vector<Argument>&);

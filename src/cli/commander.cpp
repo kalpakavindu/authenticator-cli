@@ -88,11 +88,25 @@ void Commander::run() {
     // Process command
     for (Command& cmd : Commander::_commands) {
       if (cmd.get_name() == Commander::_cur_command) {
+        // Check invalid args
+        for (auto& key : Commander::_cur_args) {
+          bool arg_found = false;
+          for (Argument& a : *(cmd.get_args())) {
+            if (key.first == a.key || key.first == a.short_key)
+              arg_found = true;
+          }
+          if (!arg_found)
+            throw std::invalid_argument("Invalid argument '" + key.first + "'.");
+        }
+
+        // Process args
         for (Argument& arg : *(cmd.get_args())) {
+          arg.specified = false;
+
           // Check required auguments
           if (arg.required) {
             bool found = false;
-            for (std::pair<std::string, std::string> key : Commander::_cur_args) {
+            for (auto& key : Commander::_cur_args) {
               if (arg.key == key.first || arg.short_key == key.first) {
                 if (key.second != "") {
                   found = true;
@@ -104,21 +118,15 @@ void Commander::run() {
               throw std::invalid_argument("Argument '" + arg.key + "' is required.");
             }
           }
-        }
 
-        // Set argument values
-        for (std::pair<std::string, std::string> key : Commander::_cur_args) {
-          bool arg_found = false;
-          for (Argument& arg : *(cmd.get_args())) {
+          for (auto& key : Commander::_cur_args) {
             if (arg.key == key.first || arg.short_key == key.first) {
-              arg_found = true;
               arg.value = key.second;
+              arg.specified = true;
             }
           }
-          if (!arg_found) {
-            throw std::invalid_argument("Invalid argument '" + key.first + "'.");
-          }
         }
+
         cmd.exec();
         return;
       }

@@ -12,6 +12,7 @@ int main(int argc, const char* argv[]) {
 
     // Register commands
     commander.Register(setup_add);
+    commander.Register(setup_list);
     commander.Register(setup_rename);
     commander.Register(setup_delete);
 

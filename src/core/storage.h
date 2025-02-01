@@ -1,6 +1,5 @@
 #pragma once
 
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -15,7 +14,6 @@ class Storage {
   const std::string _filename = "data.txt";
   std::vector<Account> _accounts;
   static Storage* _storagePtr;
-  static std::mutex _mtx;
 
  private:
   void _load();
@@ -31,14 +29,7 @@ class Storage {
   const Account* findOne(const std::string alias);
   std::vector<Account> listAll();
 
-  static Storage* Instance() {
-    if (Storage::_storagePtr == nullptr) {
-      // For thread safety
-      std::lock_guard<std::mutex> lock(Storage::_mtx);
-      if (Storage::_storagePtr == nullptr) {
-        Storage::_storagePtr = new Storage();
-      }
-    }
+  static Storage* getInstance() {
     return Storage::_storagePtr;
   }
 };

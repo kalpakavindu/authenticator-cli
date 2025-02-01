@@ -1,12 +1,12 @@
 #include <iostream>
 
 #include "cli/colors.h"
-#include "cli/command.h"
 #include "core/storage.h"
+#include "index.h"
 
-Storage* store = Storage::Instance();
+void handler_add(std::vector<Argument>& args) {
+  Storage* store = Storage::getInstance();
 
-void handler(std::vector<Argument>& args) {
   std::string alias;
   std::string name;
   std::string secret;
@@ -31,7 +31,7 @@ Command setup_add() {
   add.set_arg("--name", "-n", "Name of the account.", true);
   add.set_arg("--secret", "-s", "Secret provided by the server.", true);
 
-  add.set_handler(handler);
+  add.set_handler(handler_add);
 
   return add;
 }

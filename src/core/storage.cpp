@@ -117,6 +117,4 @@ const Account* Storage::findOne(const std::string alias) {
   return nullptr;
 }
 
-// Init static members
-Storage* Storage::_storagePtr = nullptr;
-std::mutex Storage::_mtx;
+Storage* Storage::_storagePtr = new Storage();

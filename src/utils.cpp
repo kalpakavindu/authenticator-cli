@@ -5,11 +5,10 @@
 #include <sstream>
 #include <stdexcept>
 
-#ifdef LINUX
-#include <unistd.h>
-#endif
-#ifdef WINDOWS
+#if defined(WIN32) && !defined(UNIX)
 #include <windows.h>
+#elif defined(UNIX) && !defined(WIN32)
+#include <unistd.h>
 #endif
 
 namespace utils {
@@ -91,11 +90,10 @@ namespace utils {
   }
 
   void setTimeOut(int ms) {
-#ifdef LINUX
-    usleep(sleepMs * 1000);
-#endif
-#ifdef WINDOWS
-    Sleep(sleepMs);
+#if defined(WIN32) && !defined(UNIX)
+    Sleep(ms);
+#elif defined(UNIX) && !defined(WIN32)
+    usleep(ms * 1000);
 #endif
   }
 }  // namespace utils

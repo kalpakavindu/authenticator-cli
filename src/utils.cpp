@@ -5,6 +5,13 @@
 #include <sstream>
 #include <stdexcept>
 
+#ifdef LINUX
+#include <unistd.h>
+#endif
+#ifdef WINDOWS
+#include <windows.h>
+#endif
+
 namespace utils {
   static std::random_device rd;
   static std::mt19937 gen(rd());
@@ -81,5 +88,14 @@ namespace utils {
 
   void trim(std::string& str, const char c) {
     str.erase(std::remove(str.begin(), str.end(), c), str.end());
+  }
+
+  void setTimeOut(int ms) {
+#ifdef LINUX
+    usleep(sleepMs * 1000);
+#endif
+#ifdef WINDOWS
+    Sleep(sleepMs);
+#endif
   }
 }  // namespace utils

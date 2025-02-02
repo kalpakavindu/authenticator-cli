@@ -7,17 +7,33 @@
 void handler_add(std::vector<Argument>& args) {
   Storage* store = Storage::getInstance();
 
-  std::string alias;
-  std::string name;
-  std::string secret;
+  std::string alias = "";
+  std::string name = "";
+  std::string secret = "";
 
   for (Argument arg : args) {
     if (arg.key == "--alias")
       alias = arg.value;
     if (arg.key == "--name")
       name = arg.value;
-    if (arg.key == "--secret")
-      secret = arg.value;
+  }
+
+  while (name == "") {
+    std::cout << "Enter the name: ";
+    std::cin >> name;
+    std::cout << std::endl;
+  }
+
+  while (alias == "") {
+    std::cout << "Enter alias for this account: ";
+    std::cin >> alias;
+    std::cout << std::endl;
+  }
+
+  while (secret == "") {
+    std::cout << "Enter the secret provided by the server: ";
+    std::cin >> secret;
+    std::cout << std::endl;
   }
 
   store->add(name, secret, alias);
@@ -27,9 +43,8 @@ void handler_add(std::vector<Argument>& args) {
 Command setup_add() {
   Command add("add", "Add new account.");
 
-  add.set_arg("--alias", "-a", "Alias for the account.", true);
-  add.set_arg("--name", "-n", "Name of the account.", true);
-  add.set_arg("--secret", "-s", "Secret provided by the server.", true);
+  add.set_arg("--alias", "-a", "Alias for the account.", false);
+  add.set_arg("--name", "-n", "Name of the account.", false);
 
   add.set_handler(handler_add);
 

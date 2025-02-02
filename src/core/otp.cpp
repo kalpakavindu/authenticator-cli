@@ -1,7 +1,6 @@
 #include "otp.h"
 
 #include "crypto/hmac.h"
-#include "crypto/sha1.h"
 #include "utils.h"
 
 Otp::Otp(const std::string& secret) {
@@ -15,7 +14,7 @@ int Otp::generate_code(const uint64_t& data) {
     byte_data += (char)((data >> (i * 8)) & 0xFF);
   }
 
-  HMAC<SHA1> hmac(Otp::_secret);
+  HMAC hmac(Otp::_secret);
   hmac.update(byte_data);
   std::array<uint8_t, SHA1::DIGEST_SIZE> hash = hmac.digest();
 

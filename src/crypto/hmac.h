@@ -4,13 +4,13 @@
 #include <cstdint>
 #include <string>
 
-// Be careful! this is a template.
-template <class H>
+#include "sha1.h"
+
 class HMAC {
  private:
-  H _hash;
-  std::array<unsigned char, H::BLOCK_SIZE> _ipad, _opad;
-  std::array<unsigned char, H::BLOCK_SIZE> _byte_key;
+  SHA1 _hash;
+  std::array<unsigned char, SHA1::BLOCK_SIZE> _ipad, _opad;
+  std::array<unsigned char, SHA1::BLOCK_SIZE> _byte_key;
   std::string _data;
 
  private:
@@ -21,7 +21,7 @@ class HMAC {
     }
     inner_data += HMAC::_data;
     HMAC::_hash.update(inner_data.data(), inner_data.size());
-    std::array<uint8_t, H::DIGEST_SIZE> inner_hash = HMAC::_hash.digest();
+    std::array<uint8_t, SHA1::DIGEST_SIZE> inner_hash = HMAC::_hash.digest();
 
     std::string outer_data;
     for (unsigned char c : _opad) {
@@ -37,15 +37,15 @@ class HMAC {
   HMAC(const std::string& key) {
     size_t cur_size = 0;
 
-    if (key.size() > H::BLOCK_SIZE) {
+    if (key.size() > SHA1::BLOCK_SIZE) {
       // Create Hash
       HMAC::_hash.update(key.data(), key.size());
-      std::array<uint8_t, H::DIGEST_SIZE> hash = HMAC::_hash.digest();
+      std::array<uint8_t, SHA1::DIGEST_SIZE> hash = HMAC::_hash.digest();
 
-      for (size_t i = 0; i < H::DIGEST_SIZE; ++i) {
+      for (size_t i = 0; i < SHA1::DIGEST_SIZE; ++i) {
         HMAC::_byte_key[i] = (char)hash[i];
       }
-      cur_size = H::DIGEST_SIZE;
+      cur_size = SHA1::DIGEST_SIZE;
     } else {
       for (size_t i = 0; i < key.size(); ++i) {
         HMAC::_byte_key[i] = ((char)key[i]);
@@ -54,8 +54,8 @@ class HMAC {
     }
 
     // Append trailing zeros
-    if (cur_size < H::BLOCK_SIZE) {
-      for (size_t i = cur_size; i < H::BLOCK_SIZE; ++i) {
+    if (cur_size < SHA1::BLOCK_SIZE) {
+      for (size_t i = cur_size; i < SHA1::BLOCK_SIZE; ++i) {
         HMAC::_byte_key[i] = (char)0x00;
       }
     }
@@ -64,13 +64,13 @@ class HMAC {
   void update(const std::string& data) {
     HMAC::_data = data;
 
-    for (size_t i = 0; i < H::BLOCK_SIZE; ++i) {
+    for (size_t i = 0; i < SHA1::BLOCK_SIZE; ++i) {
       HMAC::_opad[i] = HMAC::_byte_key[i] ^ (char)0x5c;
       HMAC::_ipad[i] = HMAC::_byte_key[i] ^ (char)0x36;
     }
   }
 
-  std::array<uint8_t, H::DIGEST_SIZE> digest() {
+  std::array<uint8_t, SHA1::DIGEST_SIZE> digest() {
     HMAC::_calculate();
     return HMAC::_hash.digest();
   }

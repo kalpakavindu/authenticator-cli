@@ -21,23 +21,20 @@ void handler_add(std::vector<Argument>& args) {
   while (name == "") {
     std::cout << "Enter the name: ";
     std::cin >> name;
-    std::cout << std::endl;
   }
 
   while (alias == "") {
     std::cout << "Enter alias for this account: ";
     std::cin >> alias;
-    std::cout << std::endl;
   }
 
   while (secret == "") {
     std::cout << "Enter the secret provided by the server: ";
     std::cin >> secret;
-    std::cout << std::endl;
   }
 
   store->add(name, secret, alias);
-  std::cout << "New account '" << colors::blue << alias << colors::reset << "' created." << std::endl;
+  std::cout << "New account " << colors::blue << alias << colors::reset << " created." << std::endl;
 }
 
 Command setup_add() {

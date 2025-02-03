@@ -114,7 +114,7 @@ const Account* Storage::findOne(const std::string alias) {
       return &a;
     }
   }
-  return nullptr;
+  throw std::invalid_argument("Alias not found.");
 }
 
 Storage* Storage::_storagePtr = new Storage();

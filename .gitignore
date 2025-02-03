@@ -47,3 +47,6 @@ CMakeUserPresets.json
 
 .vscode/
 build/
+.vscode/
+data.txt
+test.py
